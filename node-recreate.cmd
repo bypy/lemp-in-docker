@@ -1,0 +1,1 @@
+docker-compose rm -s -f -v node && docker-compose up --force-recreate --renew-anon-volumes --no-deps -d node
