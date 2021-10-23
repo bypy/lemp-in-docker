@@ -73,17 +73,17 @@ services:
       - wordpress_webaudit
     restart: always
 
-#
-#  phpmyadmin:
-#    depends_on:
-#      - mysql_webaudit
-#    image: phpmyadmin/phpmyadmin:5.1.1
-#    container_name: myadmin
-#    restart: always
-#    environment:
-#      - PMA_HOSTS=mysql_webaudit
-#      - PMA_PORT=3306
-#
+
+  phpmyadmin:
+    depends_on:
+      - mysql_webaudit
+    image: phpmyadmin/phpmyadmin:5.1.1
+    container_name: myadmin
+    restart: always
+    environment:
+      - PMA_HOSTS=mysql_webaudit
+      - PMA_PORT=3306
+
 #  certbot:
 #    depends_on:
 #      - nginx
