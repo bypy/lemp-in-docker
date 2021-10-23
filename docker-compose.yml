@@ -1,0 +1,103 @@
+version: '3.6'
+
+
+services:
+
+  wordpress_webaudit:
+    image: wordpress:php8.0-fpm
+    container_name: wordpress_webaudit
+    env_file: env/webaudit.by/.env
+    volumes:
+      - ./wordpress/webaudit.by:/var/www/html
+    depends_on:
+      - mysql_webaudit
+    restart: always
+
+
+  mysql_webaudit:
+    image: mysql:8.0
+    container_name: mysql_webaudit
+    env_file: env/webaudit.by/.env
+    volumes:
+      - ./mysql/webaudit.by:/var/lib/mysql
+    restart: always
+
+
+
+  node:
+    build:
+      context: ./nodejs
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=development
+    container_name: node
+    image: lemp-node
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./nodejs/node-app:/opt/node_app/app
+      - ./nodejs/node-app/package.json:/opt/node_app/app/package.json
+      - ./nodejs/node-app/package-lock.json:/opt/node_app/app/package-lock.json
+      - notused:/opt/node_app/app/node_modules
+    healthcheck:
+      disable: true
+
+
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: nginx
+    image: lemp-nginx
+    env_file: env/nginx/.env
+    environment:
+      WP_CGI_1: wordpress_webaudit
+      WP_SITE_1: webaudit.by
+      STATIC_SITE_1: booba.by
+      WP_CONTAINER_ROOT: /var/www/html/
+    ports:
+      - '80:8080'
+      - '443:4430'
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      # - ./nginx/templates:/etc/nginx/templates
+      - ./nginx/snippets:/etc/nginx/snippets
+      - ./logs/nginx:/var/log/nginx
+      - ./static/booba.by:/var/www/html/booba.by
+      - ./wordpress/webaudit.by:/var/www/html/webaudit.by
+#      - web-root:/var/www/html
+#      - ./certs:/etc/letsencrypt
+#      - certbot-var:/var/lib/letsencrypt
+    depends_on:
+      - wordpress_webaudit
+    restart: always
+
+#
+#  phpmyadmin:
+#    depends_on:
+#      - mysql_webaudit
+#    image: phpmyadmin/phpmyadmin:5.1.1
+#    container_name: myadmin
+#    restart: always
+#    environment:
+#      - PMA_HOSTS=mysql_webaudit
+#      - PMA_PORT=3306
+#
+#  certbot:
+#    depends_on:
+#      - nginx
+#    image: certbot/certbot
+#    container_name: certbot-boo
+#    volumes:
+#      - ./certs:/etc/letsencrypt
+#      - certbot-var:/var/lib/letsencrypt
+#      - web-root:/var/www/html
+#    command: certonly --webroot --email admin@booba.by --agree-tos --no-eff-email --staging --webroot-path /var/www/html -d booba.by -d www.booba.by -d cards.booba.by -d webaudit.by -d www.webaudit.by -d pma.webaudit.by
+
+
+volumes:
+  notused:
+#  web-root:
+#  certbot-etc:
+#  certbot-var:

@@ -1,0 +1,33 @@
+server {
+    listen 8080;
+    server_name             www.${STATIC_SITE_1} ${STATIC_SITE_1};
+
+    location ~ /.well-known/acme-challenge {
+        allow all;
+        root /var/www/html/${STATIC_SITE_1};
+    }
+
+    location / {
+        rewrite ^ https://$host$request_uri? permanent;
+    }
+
+    location / {
+        root                    /var/www/html/${STATIC_SITE_1};
+        index                   index.html index.htm;
+    }
+
+    access_log /var/log/nginx/${STATIC_SITE_1}.access.log;
+    error_log /var/log/nginx/${STATIC_SITE_1}.error.log;
+}
+
+server {
+    listen 8080;
+    server_name cards.${STATIC_SITE_1};
+
+    location / {
+      proxy_pass http://node:3000;
+    }
+
+    access_log /var/log/nginx/${STATIC_SITE_1}.access.log;
+    error_log /var/log/nginx/${STATIC_SITE_1}.error.log;
+}
