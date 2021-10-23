@@ -1,0 +1,9 @@
+* install
+    - run "python -m venv .venv"
+    - cmd ".\.venv\Scripts\activate"
+    - run "pip3 install locust"
+    - cmd "locust -V"
+
+* create locustfile.py
+* run "locust"
+* open http://localhost:8089/ in browser

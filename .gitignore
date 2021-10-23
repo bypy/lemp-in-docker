@@ -12,6 +12,7 @@ nodejs/node-app/**/*.*
 !node-app/**/*.css
 !node-app/**/*.html
 .idea/
-.venv/
+**/.venv/
+
 
 
