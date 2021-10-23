@@ -1,0 +1,17 @@
+mysql/
+wordpress/
+static/
+logs/
+letsencrypt/
+certs/
+certs-data/
+**/node_modules
+nodejs/node-app/**/*.*
+!node-app/**/*.js
+!node-app/**/*.json
+!node-app/**/*.css
+!node-app/**/*.html
+.idea/
+.venv/
+
+
