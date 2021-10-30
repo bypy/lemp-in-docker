@@ -1,42 +1,63 @@
 server {
     listen      8080;
     listen      [::]:8080;
+    server_name www.booba.by booba.by;
 
-    # avoid redirect to port 8080
-    port_in_redirect off;
+    # acme challenge
+    include     snippets/letsencrypt.conf;
+
+    location / {
+        rewrite ^ https://$host$request_uri? permanent;
+    }
+}
+
+server {
+    listen                  4430 ssl http2;
+    listen                  [::]:4430 ssl http2;
 
     server_name             www.booba.by booba.by;
+
+    # avoid redirect to port 4430
+    port_in_redirect off;
+
+    # SSL
+    ssl_certificate         /etc/letsencrypt/live/booba.by/fullchain.pem;
+    ssl_certificate_key     /etc/letsencrypt/live/booba.by/privkey.pem;
+    ssl_trusted_certificate /etc/letsencrypt/live/booba.by/chain.pem;
 
     # if not present, default value is 'html'
     root                    /var/www/html/booba.by/public_html;
     index                   index.htm index.html;
 
-    # acme challenge
-    include                 snippets/letsencrypt.conf;
-
     # logging
     access_log              /var/log/nginx/booba.by.access.log main;
     error_log               /var/log/nginx/booba.by.error.log warn;
 
-    # additional configs
-    include     snippets/general.conf;
-
     # limits
     limit_req   zone=bot burst=4 nodelay;
+
+    # additional configs
+    include     snippets/general.conf;
 
     location / {
        try_files   $uri $uri/ =404;
        # set expiring values
        include     snippets/assets.conf;
-       # prevent requsting more than 1-3 page per second
+       # prevent to requst more than 1-3 page per second
        include     snippets/doc_limits.conf;
     }
 
     location /friend {
        alias /var/www/html/booba.by/public_html/zoo/;
        try_files   $uri $uri/ =404;
+       # set expiring values
        include     snippets/assets.conf;
+       # prevent to requst more than 1-3 page per second
        include     snippets/doc_limits.conf;
     }
 
 }
+
+
+
+
