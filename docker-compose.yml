@@ -64,7 +64,7 @@ services:
       # - ./nginx/templates:/etc/nginx/templates
       - ./nginx/snippets:/etc/nginx/snippets
       - ./logs/nginx:/var/log/nginx
-      - ./static/booba.by:/var/www/html/booba.by
+      - ./static/booba.by:/var/www/html/booba.by/public_html
       - ./wordpress/webaudit.by:/var/www/html/webaudit.by
 #      - web-root:/var/www/html
 #      - ./certs:/etc/letsencrypt
