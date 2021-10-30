@@ -13,6 +13,5 @@ nodejs/node-app/**/*.*
 !node-app/**/*.html
 .idea/
 **/.venv/
-
-
-
+env
+**/.env
