@@ -15,3 +15,5 @@ nodejs/node-app/**/*.*
 **/.venv/
 env
 **/.env
+**/__pycache__/
+
