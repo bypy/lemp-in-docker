@@ -1,0 +1,30 @@
+server {
+    listen      8080;
+    listen      [::]:8080;
+
+    server_name     cards.booba.by www.cards.booba.by;
+
+    # security
+    include                 snippets/security.conf;
+
+    # acme challenge
+    include                 snippets/letsencrypt.conf;
+
+    # logging
+    access_log              /var/log/nginx/cards.booba.by.access.log;
+    error_log               /var/log/nginx/cards.booba.by.error.log;
+
+    # additional configs
+    include     snippets/general.conf;
+
+    location = / {
+        proxy_pass http://node:3000;
+        limit_req   zone=doc burst=2 nodelay;
+        proxy_hide_header X-Powered-By;
+    }
+
+    location / {
+        proxy_pass http://node:3000;
+        access_log off;
+    }
+}
